@@ -23,7 +23,7 @@ public class ProductMapper {
                 .name(dto.getName())
                 .description(dto.getDescription())
                 .price(dto.getPrice())
-                .quantity(dto.getQuantity())
+                .stock(dto.getStock())
                 .category(categoryRepository.findById(dto.getCategoryId()).orElseThrow(()->new CategoryNotFoundException("Category not found")))
                 .build();
     }
@@ -33,7 +33,7 @@ public class ProductMapper {
                 .id(product.getId())
                 .name(product.getName())
                 .description(product.getDescription())
-                .quantity(product.getQuantity())
+                .stock(product.getStock())
                 .price(product.getPrice())
                 .category(categoryMapper.toDTO(product.getCategory()))
                 .build();

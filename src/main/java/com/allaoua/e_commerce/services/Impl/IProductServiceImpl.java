@@ -9,6 +9,10 @@ import com.allaoua.e_commerce.mappers.ProductMapper;
 import com.allaoua.e_commerce.repositories.CategoryRepository;
 import com.allaoua.e_commerce.repositories.ProductRepository;
 import com.allaoua.e_commerce.services.IProductService;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -25,7 +29,7 @@ public class IProductServiceImpl implements IProductService {
         this.productMapper = productMapper;
         this.categoryRepository = categoryRepository;
     }
-
+    @CacheEvict(value = "products", allEntries = true)
     @Override
     public ProductResponseDTO saveProduct(ProductRequestDTO productRequestDTO) {
         Product productToSave=productMapper.toEntity(productRequestDTO);
@@ -33,6 +37,7 @@ public class IProductServiceImpl implements IProductService {
         return productMapper.toDTO(savedProduct);
     }
 
+    @CacheEvict(value = {"products","product"},key = "#productId", allEntries = true)
     @Override
     public ProductResponseDTO updateProduct(String productId,ProductRequestDTO productRequestDTO) throws ProductNotFoundException {
         productRepository.findById(productId).orElseThrow(() -> new ProductNotFoundException("product not found"));
@@ -42,6 +47,7 @@ public class IProductServiceImpl implements IProductService {
         return productMapper.toDTO(updatedProduct);
     }
 
+    @CacheEvict(value = "products", allEntries = true)
     @Override
     public String deleteProduct(String productId) throws ProductNotFoundException {
         productRepository.findById(productId).orElseThrow(() -> new ProductNotFoundException("product not found"));
@@ -49,6 +55,7 @@ public class IProductServiceImpl implements IProductService {
         return "Product deleted successfully";
     }
 
+    @Cacheable(value = "product")
     @Override
     public ProductResponseDTO getProductById(String productId) throws ProductNotFoundException {
         Optional<Product> product=productRepository.findById(productId);
@@ -57,9 +64,10 @@ public class IProductServiceImpl implements IProductService {
         return productMapper.toDTO(product.get());
     }
 
+    @Cacheable(value = "products")
     @Override
-    public List<ProductResponseDTO> getAllProducts() {
-        return  productMapper.toListOfDTOS(productRepository.findAll());
+    public List<ProductResponseDTO> getAllProducts(int page,int size) {
+        return  productMapper.toListOfDTOS(productRepository.findAll(PageRequest.of(page,size)).toList());
     }
 
     @Override

@@ -13,7 +13,7 @@ public interface IProductService {
     ProductResponseDTO updateProduct(String productId,ProductRequestDTO productRequestDTO) throws ProductNotFoundException;
     String deleteProduct(String productId) throws ProductNotFoundException;
     ProductResponseDTO getProductById(String productId) throws ProductNotFoundException;
-    List<ProductResponseDTO> getAllProducts();
+    List<ProductResponseDTO> getAllProducts(int page,int size);
     List<ProductResponseDTO> getAllProductsByCategoryId(Long categoryId) throws CategoryNotFoundException;
 
 }

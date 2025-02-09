@@ -4,7 +4,6 @@ import com.allaoua.e_commerce.dtos.Category.CategoryRequestDTO;
 import com.allaoua.e_commerce.dtos.Category.CategoryResponseDTO;
 import com.allaoua.e_commerce.entities.Category;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 
 import java.util.List;
 @Component

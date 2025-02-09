@@ -1,4 +1,4 @@
-package com.allaoua.e_commerce.dtos.Product;
+package com.allaoua.e_commerce.dtos.OrderProduct;
 
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
@@ -10,14 +10,10 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class ProductRequestDTO {
+public class OrderProductRequestDTO {
     @NotBlank
-    private String name;
-    private String description;
-    @Min(0)
-    private double price;
-    @Min(1)
-    private int stock;
+    private String productId;
     @NotNull
-    private Long categoryId;
+    @Min(1)
+    private int quantity;
 }

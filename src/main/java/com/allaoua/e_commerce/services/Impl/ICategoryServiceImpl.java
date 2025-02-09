@@ -8,6 +8,8 @@ import com.allaoua.e_commerce.exceptions.CategoryNotFoundException;
 import com.allaoua.e_commerce.mappers.CategoryMapper;
 import com.allaoua.e_commerce.repositories.CategoryRepository;
 import com.allaoua.e_commerce.services.ICategoryService;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,7 +26,7 @@ public class ICategoryServiceImpl implements ICategoryService {
         this.categoryRepository = categoryRepository;
         this.categoryMapper = categoryMapper;
     }
-
+    @CacheEvict(value = "categories", allEntries = true)
     @Override
     public CategoryResponseDTO saveCategory(CategoryRequestDTO categoryRequestDTO) {
         Category categoryToSave = categoryMapper.toEntity(categoryRequestDTO);
@@ -32,6 +34,7 @@ public class ICategoryServiceImpl implements ICategoryService {
         return categoryMapper.toDTO(savedCategory);
     }
 
+    @CacheEvict(value = {"categories","category"},key = "#categoryId", allEntries = true)
     @Override
     public CategoryResponseDTO updateCategory(Long categoryId,CategoryRequestDTO categoryRequestDTO) throws CategoryNotFoundException {
         categoryRepository.findById(categoryId).orElseThrow(()-> new CategoryNotFoundException("Category not found"));
@@ -41,6 +44,7 @@ public class ICategoryServiceImpl implements ICategoryService {
         return categoryMapper.toDTO(updatedCategory);
     }
 
+    @CacheEvict(value = "categories", allEntries = true)
     @Override
     public String deleteCategory(Long categoryId) throws CategoryNotFoundException {
         categoryRepository.findById(categoryId).orElseThrow(()-> new CategoryNotFoundException("Category not found"));
@@ -48,6 +52,7 @@ public class ICategoryServiceImpl implements ICategoryService {
         return "Category deleted successfully";
     }
 
+    @Cacheable(value = "category")
     @Override
     public CategoryResponseDTO getCategoryById(Long categoryId) throws CategoryNotFoundException {
         Optional<Category> category=categoryRepository.findById(categoryId);
@@ -56,6 +61,7 @@ public class ICategoryServiceImpl implements ICategoryService {
         return categoryMapper.toDTO(category.get());
     }
 
+    @Cacheable(value = "categories")
     @Override
     public List<CategoryResponseDTO> getAllCategories() {
         return categoryMapper.toListOfDTOS(categoryRepository.findAll());
